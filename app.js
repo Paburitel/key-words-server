@@ -38,19 +38,36 @@ let oauth = new OAuth2Server({
 });
 
 //---------------------------------------------------------------
-app.use(function(req, res, next) {
+app.use((req, res, next) => {
     const allowedOrigins = ['http://localhost:4200'];
     const origin = req.headers.origin;
     if(allowedOrigins.indexOf(origin) > -1){
-        console.log('Allow');
         res.header('Access-Control-Allow-Origin', origin);
     }
-    res.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.header('Access-Control-Allow-Credentials', true);
     return next();
 });
+app.options('/*', (req, res, next) => {
+    res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+    res.sendStatus(200);
+});
 routes(app);
+
+/** Error catching */
+
+app.use(function(req, res){
+    res.status(404);
+    log.debug('Not found URL: %s', req.url);
+    res.send({ error: 'Not found' });
+});
+
+app.use(function(err, req, res){
+    res.status(err.status || 500);
+    log.error('Internal error(%d): %s', res.statusCode, err.message);
+    res.send({ error: err.message });
+});
+/** -------------------------------------------- */
+
 app.listen(config.port, function () {
     log.info('Express server listening on port 3000!!!');
 });
