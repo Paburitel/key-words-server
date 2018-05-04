@@ -7,7 +7,7 @@ module.exports = function (app) {
         return GroupModel.find((err, groups) => {
             if (!err) {
                 log.info('send groups');
-                return res.send(groups);
+                return res.send({ data: groups });
             } else {
                 res.statusCode = 500;
                 log.error('Internal error(%d): %s',res.statusCode, err.message);
@@ -50,25 +50,29 @@ module.exports = function (app) {
         });
     });
     app.put('/V0/groups/:id', (req, res) => {
-        const data = {
-            name: req.body.name,
-            age: req.body.description
-        };
-        return GroupModel.findByIdAndUpdate(req.params.id, data, {new: true}, (err, group) => {
-            if (!err) {
-                log.info("group updated");
-                return res.send({ status: 'OK', data: group });
-            } else {
-                if(err.name === 'ValidationError') {
-                    res.statusCode = 400;
-                    res.send({ error: 'Name Validation error' });
-                } else {
-                    res.statusCode = 500;
-                    res.send({ error: 'Server error' });
-                }
-                log.error('Internal error(%d): %s',res.statusCode, err.message);
+        return GroupModel.findById(req.params.id, function (err, group) {
+            if(!group) {
+                res.statusCode = 404;
+                return res.send({ error: 'Not found' });
             }
-
+            group.name = req.body.name || group.name;
+            group.description = req.body.description;
+            group.words = req.body.words;
+            return group.save(function (err) {
+                if (!err) {
+                    log.info("group updated");
+                    return res.send({ status: 'OK', data: group });
+                } else {
+                    if( err.name === 'ValidationError' ) {
+                        res.statusCode = 400;
+                        res.send({ error: 'Validation error' });
+                    } else {
+                        res.statusCode = 500;
+                        res.send({ error: 'Server error' });
+                    }
+                    log.error('Internal error(%d): %s',res.statusCode, err.message);
+                }
+            });
         });
     });
     app.delete('/V0/groups/:id', (req, res) => {

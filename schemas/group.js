@@ -5,10 +5,16 @@ module.exports = function (mongoose, Word) {
         name: { type: String, required: true },
         description: { type: String, required: false },
         words: { type: [Word], required: false },
-        modified: { type: Date, default: Date.now }
+        updated_at : { type: Date, default: Date.now },
+        created_at: { type: Date, default: Date.now },
     });
     Group.path('name').validate(function (v) {
         return v.length > 1 && v.length < 15;
+    });
+
+    Group.pre('save', function(next) {
+        this.updated_at = Date.now();
+        next();
     });
 
     return Group;
