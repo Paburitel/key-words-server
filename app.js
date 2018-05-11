@@ -6,6 +6,8 @@ const morgan = require('morgan');
 const app = express();
 const fs = require('fs');
 const bodyParser = require('body-parser');
+// use for new client
+// const makeClient = require('./helpers/makeClient')();
 
 const favicon = require('serve-favicon');
 const path = require('path');
@@ -13,10 +15,15 @@ const path = require('path');
 const log = require('./libs/log')(module);
 
 const OAuth2Server = require('oauth2-server');
+const passport = require('passport');
 
 const config = require('./config/config');
 
 const routes = require('./routes/index');
+
+app.use(passport.initialize());
+
+require('./libs/oauth');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -50,6 +57,7 @@ app.options('/*', (req, res, next) => {
     res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
     res.sendStatus(200);
+    return next();
 });
 routes(app);
 
