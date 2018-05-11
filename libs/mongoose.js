@@ -13,3 +13,7 @@ db.once('open', function callback () {
 });
 
 module.exports.GroupModel = mongoose.model('Group', schemas.Group);
+module.exports.UserModel = mongoose.model('User', schemas.User);
+module.exports.ClientModel = mongoose.model('Client', schemas.Client);
+module.exports.AccessTokenModel = mongoose.model('AccessToken', schemas.AccessToken);
+module.exports.RefreshTokenModel = mongoose.model('RefreshTokenModel', schemas.RefreshToken);
