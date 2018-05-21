@@ -7,13 +7,14 @@ const UserModel               = require('./mongoose').UserModel;
 const ClientModel             = require('./mongoose').ClientModel;
 const AccessTokenModel        = require('./mongoose').AccessTokenModel;
 const RefreshTokenModel       = require('./mongoose').RefreshTokenModel;
+const log = require('../libs/log')(module);
 
 passport.use(new BasicStrategy(
     function(username, password, done) {
         ClientModel.findOne({ clientId: username }, function(err, client) {
             if (err) { return done(err); }
             if (!client) { return done(null, false); }
-            if (client.clientSecret != password) { return done(null, false); }
+            if (client.clientSecret !== password) { return done(null, false); }
 
             return done(null, client);
         });
@@ -25,7 +26,7 @@ passport.use(new ClientPasswordStrategy(
         ClientModel.findOne({ clientId: clientId }, function(err, client) {
             if (err) { return done(err); }
             if (!client) { return done(null, false); }
-            if (client.clientSecret != clientSecret) { return done(null, false); }
+            if (client.clientSecret !== clientSecret) { return done(null, false); }
 
             return done(null, client);
         });
@@ -38,7 +39,7 @@ passport.use(new BearerStrategy(
             if (err) { return done(err); }
             if (!token) { return done(null, false); }
 
-            if( Math.round((Date.now()-token.created)/1000) > config.security.tokenLife ) {
+            if( Math.round((Date.now()- token.created) / 1000) > config.security.tokenLife ) {
                 AccessTokenModel.remove({ token: accessToken }, function (err) {
                     if (err) return done(err);
                 });
@@ -49,7 +50,7 @@ passport.use(new BearerStrategy(
                 if (err) { return done(err); }
                 if (!user) { return done(null, false, { message: 'Unknown user' }); }
 
-                var info = { scope: '*' }
+                const info = { scope: '*' };
                 done(null, user, info);
             });
         });

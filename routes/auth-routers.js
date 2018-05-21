@@ -9,7 +9,6 @@ module.exports = function (app) {
             username: req.body.username,
             password: req.body.password
         };
-        log.info(req.body.username);
         const user = new UserModel(data);
         user.save(function(err, user) {
             if (err) {

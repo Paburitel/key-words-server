@@ -6,12 +6,14 @@ const UserModel           = require('./mongoose').UserModel;
 const ClientModel         = require('./mongoose').ClientModel;
 const AccessTokenModel    = require('./mongoose').AccessTokenModel;
 const RefreshTokenModel   = require('./mongoose').RefreshTokenModel;
+const log = require('../libs/log')(module);
 
 // create OAuth 2.0 server
 const server = oauth2orize.createServer();
 
 // Exchange username & password for access token.
 server.exchange(oauth2orize.exchange.password(function(client, username, password, scope, done) {
+
     UserModel.findOne({ username: username }, function(err, user) {
         if (err) { return done(err); }
         if (!user) { return done(null, false); }
