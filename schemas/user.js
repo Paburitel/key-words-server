@@ -9,6 +9,11 @@ module.exports = function (mongoose) {
             unique: true,
             required: true
         },
+        email: {
+            type: String,
+            unique: true,
+            required: true
+        },
         hashedPassword: {
             type: String,
             required: true
@@ -46,6 +51,15 @@ module.exports = function (mongoose) {
     User.methods.checkPassword = function(password) {
         return this.encryptPassword(password) === this.hashedPassword;
     };
+
+    User.path('email').validate(function (email) {
+        const emailRegex = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+        return emailRegex.test(email);
+    }, 'The email field should be correct.');
+
+    User.path('username').validate(function (v) {
+        return v.length > 1 && v.length < 15;
+    });
 
     return User;
 };

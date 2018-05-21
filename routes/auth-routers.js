@@ -7,14 +7,18 @@ module.exports = function (app) {
     app.post('/api/oauth/reg', (req, res) => {
         const data = {
             username: req.body.username,
-            password: req.body.password
+            password: req.body.password,
+            email: req.body.email
         };
         const user = new UserModel(data);
         user.save(function(err, user) {
             if (err) {
-                return log.error(err);
+                res.statusCode = 500;
+                log.error('Internal error(%d): %s',res.statusCode, err.message);
+                return res.send({ error: err.message });
             } else {
-                log.info("New user - %s:%s",user.username,user.password);
+                log.info("New user - %s:%s", user.username, user.password, user.email);
+                return res.send({ status: 'OK'});
             }
         });
     });
