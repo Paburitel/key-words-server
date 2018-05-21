@@ -7,6 +7,7 @@ module.exports = function (mongoose, Word) {
         words: { type: [Word], required: false },
         updated_at : { type: Date, default: Date.now },
         created_at: { type: Date, default: Date.now },
+        created_by: { type: Schema.Types.ObjectId, required: true },
     });
     Group.path('name').validate(function (v) {
         return v.length > 1 && v.length < 15;
