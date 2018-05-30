@@ -53,30 +53,31 @@ app.use((req, res, next) => {
     }
     return next();
 });
-app.options('/*', (req, res, next) => {
+app.options('/*', (req, res) => {
     res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With, application/x-www-form-urlencoded');
     res.sendStatus(200);
-    return next();
 });
 routes(app);
 
 /** Error catching */
 
-app.use(function(req, res){
+app.use((req, res, next) => {
     res.status(404);
     log.debug('Not found URL: %s', req.url);
     res.send({ error: 'Not found' });
+    return next();
 });
 
-app.use(function(err, req, res){
+app.use((err, req, res, next) => {
     res.status(err.status || 500);
     log.error('Internal error(%d): %s', res.statusCode, err.message);
     res.send({ error: err.message });
+    return next();
 });
 /** -------------------------------------------- */
 
-app.listen(config.port, function () {
+app.listen(config.port, () => {
     log.info('Express server listening on port 3000!!!');
 });
 
