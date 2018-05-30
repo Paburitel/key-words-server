@@ -31,7 +31,7 @@ module.exports = function (app) {
             // `BearerStrategy`.  It is typically used to indicate scope of the token,
             // and used in access control checks.  For illustrative purposes, this
             // example simply returns the scope in the response.
-            res.json({ user_id: req.user.userId, name: req.user.username, scope: req.authInfo.scope })
+            res.json({ user_id: req.user.userId, name: req.user.username, email: req.user.email,  scope: req.authInfo.scope })
         }
     );
 };
