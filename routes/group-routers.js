@@ -5,7 +5,7 @@ const passport = require('passport');
 
 module.exports = function (app) {
     app.get('/v0/groups', passport.authenticate('bearer', { session: false }), (req, res) => {
-        GroupModel.find({ created_by: req.user._id}, (err, groups) => {
+        return GroupModel.find({ created_by: req.user._id}, (err, groups) => {
             if(!groups) {
                 res.statusCode = 404;
                 log.info('no groups');
@@ -16,7 +16,7 @@ module.exports = function (app) {
                 return res.send({ status: 'OK', data: groups });
             } else {
                 res.statusCode = 500;
-                log.error('Internal error(%d): %s',res.statusCode, err.message);
+                log.error('Internal error(%d): %s', res.statusCode, err.message);
                 return res.send({ error: 'Server error' });
             }
         });
@@ -47,7 +47,7 @@ module.exports = function (app) {
             description: req.body.description,
             words: req.body.words
         });
-        group.save((err) => {
+        return group.save((err) => {
             if (!err) {
                 log.info('Group created');
                 return res.send({ status: 'OK', data: group });
