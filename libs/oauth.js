@@ -10,7 +10,8 @@ const RefreshTokenModel       = require('./mongoose').RefreshTokenModel;
 const log = require('../libs/log')(module);
 
 passport.use(new BasicStrategy(
-    function(username, password, done) {
+    (username, password, done) => {
+        log.info('BasicStrategy');
         ClientModel.findOne({ clientId: username }, function(err, client) {
             if (err) { return done(err); }
             if (!client) { return done(null, false); }
@@ -22,7 +23,8 @@ passport.use(new BasicStrategy(
 ));
 
 passport.use(new ClientPasswordStrategy(
-    function(clientId, clientSecret, done) {
+    (clientId, clientSecret, done) => {
+        log.info('ClientPasswordStrategy');
         ClientModel.findOne({ clientId: clientId }, function(err, client) {
             if (err) { return done(err); }
             if (!client) { return done(null, false); }
@@ -34,7 +36,8 @@ passport.use(new ClientPasswordStrategy(
 ));
 
 passport.use(new BearerStrategy(
-    function(accessToken, done) {
+    (accessToken, done) => {
+        log.info('BearerStrategy');
         AccessTokenModel.findOne({ token: accessToken }, function(err, token) {
             if (err) { return done(err); }
             if (!token) { return done(null, false); }

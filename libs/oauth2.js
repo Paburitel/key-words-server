@@ -12,16 +12,17 @@ const log = require('../libs/log')(module);
 const server = oauth2orize.createServer();
 
 // Exchange username & password for access token.
-server.exchange(oauth2orize.exchange.password(function(client, username, password, scope, done) {
-    UserModel.findOne({ username: username }, function(err, user) {
+server.exchange(oauth2orize.exchange.password((client, username, password, scope, done) => {
+    log.info('oauth2orize.exchange.password');
+    UserModel.findOne({ username: username }, (err, user) => {
         if (err) { return done(err); }
         if (!user) { return done(null, false); }
         if (!user.checkPassword(password)) { return done(null, false); }
 
-        RefreshTokenModel.remove({ userId: user.userId, clientId: client.clientId }, function (err) {
+        RefreshTokenModel.remove({ userId: user.userId, clientId: client.clientId }, (err) => {
             if (err) return done(err);
         });
-        AccessTokenModel.remove({ userId: user.userId, clientId: client.clientId }, function (err) {
+        AccessTokenModel.remove({ userId: user.userId, clientId: client.clientId }, (err) => {
             if (err) return done(err);
         });
 
@@ -42,7 +43,8 @@ server.exchange(oauth2orize.exchange.password(function(client, username, passwor
 
 // Exchange refreshToken for access token.
 server.exchange(oauth2orize.exchange.refreshToken(function(client, refreshToken, scope, done) {
-    RefreshTokenModel.findOne({ token: refreshToken }, function(err, token) {
+    log.info('oauth2orize.exchange.refreshToken');
+    RefreshTokenModel.findOne({ token: refreshToken }, (err, token) => {
         if (err) { return done(err); }
         if (!token) { return done(null, false); }
         if (!token) { return done(null, false); }
