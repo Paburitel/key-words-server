@@ -11,8 +11,7 @@ const log = require('../libs/log')(module);
 
 passport.use(new BasicStrategy(
     (username, password, done) => {
-        log.info('BasicStrategy');
-        ClientModel.findOne({ clientId: username }, function(err, client) {
+        ClientModel.findOne({ clientId: username }, (err, client) => {
             if (err) { return done(err); }
             if (!client) { return done(null, false); }
             if (client.clientSecret !== password) { return done(null, false); }
@@ -24,8 +23,7 @@ passport.use(new BasicStrategy(
 
 passport.use(new ClientPasswordStrategy(
     (clientId, clientSecret, done) => {
-        log.info('ClientPasswordStrategy');
-        ClientModel.findOne({ clientId: clientId }, function(err, client) {
+        ClientModel.findOne({ clientId: clientId }, (err, client) => {
             if (err) { return done(err); }
             if (!client) { return done(null, false); }
             if (client.clientSecret !== clientSecret) { return done(null, false); }
@@ -37,19 +35,18 @@ passport.use(new ClientPasswordStrategy(
 
 passport.use(new BearerStrategy(
     (accessToken, done) => {
-        log.info('BearerStrategy');
-        AccessTokenModel.findOne({ token: accessToken }, function(err, token) {
+        AccessTokenModel.findOne({ token: accessToken }, (err, token) => {
             if (err) { return done(err); }
             if (!token) { return done(null, false); }
 
             if( Math.round((Date.now()- token.created) / 1000) > config.security.tokenLife ) {
-                AccessTokenModel.remove({ token: accessToken }, function (err) {
+                AccessTokenModel.remove({ token: accessToken }, (err) => {
                     if (err) return done(err);
                 });
                 return done(null, false, { message: 'Token expired' });
             }
 
-            UserModel.findById(token.userId, function(err, user) {
+            UserModel.findById(token.userId, (err, user) => {
                 if (err) { return done(err); }
                 if (!user) { return done(null, false, { message: 'Unknown user' }); }
 

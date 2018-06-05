@@ -3,7 +3,6 @@ const passport            = require('passport');
 const crypto              = require('crypto');
 const config              = require('../config/config');
 const UserModel           = require('./mongoose').UserModel;
-const ClientModel         = require('./mongoose').ClientModel;
 const AccessTokenModel    = require('./mongoose').AccessTokenModel;
 const RefreshTokenModel   = require('./mongoose').RefreshTokenModel;
 const log = require('../libs/log')(module);
@@ -13,12 +12,10 @@ const server = oauth2orize.createServer();
 
 // Exchange username & password for access token.
 server.exchange(oauth2orize.exchange.password((client, username, password, scope, done) => {
-    log.info('oauth2orize.exchange.password');
     UserModel.findOne({ username: username }, (err, user) => {
         if (err) { return done(err); }
         if (!user) { return done(null, false); }
         if (!user.checkPassword(password)) { return done(null, false); }
-
         RefreshTokenModel.remove({ userId: user.userId, clientId: client.clientId }, (err) => {
             if (err) return done(err);
         });
@@ -34,7 +31,7 @@ server.exchange(oauth2orize.exchange.password((client, username, password, scope
             if (err) { return done(err); }
         });
         const info = { scope: '*' }
-        token.save(function (err, token) {
+        token.save(function (err) {
             if (err) { return done(err); }
             done(null, tokenValue, refreshTokenValue, { 'expires_in': config.security.tokenLife });
         });
@@ -42,21 +39,20 @@ server.exchange(oauth2orize.exchange.password((client, username, password, scope
 }));
 
 // Exchange refreshToken for access token.
-server.exchange(oauth2orize.exchange.refreshToken(function(client, refreshToken, scope, done) {
-    log.info('oauth2orize.exchange.refreshToken');
+server.exchange(oauth2orize.exchange.refreshToken((client, refreshToken, scope, done) => {
     RefreshTokenModel.findOne({ token: refreshToken }, (err, token) => {
         if (err) { return done(err); }
         if (!token) { return done(null, false); }
         if (!token) { return done(null, false); }
 
-        UserModel.findById(token.userId, function(err, user) {
+        UserModel.findById(token.userId, (err, user) => {
             if (err) { return done(err); }
             if (!user) { return done(null, false); }
 
-            RefreshTokenModel.remove({ userId: user.userId, clientId: client.clientId }, function (err) {
+            RefreshTokenModel.remove({ userId: user.userId, clientId: client.clientId }, (err) => {
                 if (err) return done(err);
             });
-            AccessTokenModel.remove({ userId: user.userId, clientId: client.clientId }, function (err) {
+            AccessTokenModel.remove({ userId: user.userId, clientId: client.clientId },  (err) => {
                 if (err) return done(err);
             });
 
@@ -64,11 +60,11 @@ server.exchange(oauth2orize.exchange.refreshToken(function(client, refreshToken,
             const refreshTokenValue = crypto.randomBytes(32).toString('base64');
             const token = new AccessTokenModel({ token: tokenValue, clientId: client.clientId, userId: user.userId });
             const refreshToken = new RefreshTokenModel({ token: refreshTokenValue, clientId: client.clientId, userId: user.userId });
-            refreshToken.save(function (err) {
+            refreshToken.save((err) => {
                 if (err) { return done(err); }
             });
             const info = { scope: '*' }
-            token.save(function (err, token) {
+            token.save((err) => {
                 if (err) { return done(err); }
                 done(null, tokenValue, refreshTokenValue, { 'expires_in': config.get('security:tokenLife') });
             });

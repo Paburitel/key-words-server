@@ -1,4 +1,4 @@
-var crypto      = require('crypto');
+const crypto = require('crypto');
 
 module.exports = function (mongoose) {
     const Schema = mongoose.Schema;
@@ -40,12 +40,11 @@ module.exports = function (mongoose) {
 
     User.virtual('password')
         .set(function(password) {
-            this._plainPassword = password;
             this.salt = crypto.randomBytes(32).toString('base64');
             //more secure - this.salt = crypto.randomBytes(128).toString('base64');
             this.hashedPassword = this.encryptPassword(password);
         })
-        .get(function() { return this._plainPassword; });
+        .get(function() { return this.hashedPassword; });
 
 
     User.methods.checkPassword = function(password) {
