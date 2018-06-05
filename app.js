@@ -14,7 +14,6 @@ const path = require('path');
 
 const log = require('./libs/log')(module);
 
-const OAuth2Server = require('oauth2-server');
 const passport = require('passport');
 
 const config = require('./config/config');
@@ -35,14 +34,6 @@ const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'),
 
 // setup the logger
 app.use(morgan('combined', {stream: accessLogStream}));
-
-
-//-------------------------------AUTH---------------------------------
-let oauth = new OAuth2Server({
-    model: require('./models/auth.model'),
-    allowBearerTokensInQueryString: true,
-    accessTokenLifetime: 10 * 60 * 60
-});
 
 //---------------------------------------------------------------
 app.use((req, res, next) => {
@@ -70,6 +61,7 @@ app.use((req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
+    log.error('500 Handler');
     res.status(err.status || 500);
     log.error('Internal error(%d): %s', res.statusCode, err.message);
     res.send({ error: err.message });

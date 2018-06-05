@@ -17,3 +17,4 @@ module.exports.UserModel = mongoose.model('User', schemas.User);
 module.exports.ClientModel = mongoose.model('Client', schemas.Client);
 module.exports.AccessTokenModel = mongoose.model('AccessToken', schemas.AccessToken);
 module.exports.RefreshTokenModel = mongoose.model('RefreshTokenModel', schemas.RefreshToken);
+module.exports.ResetTokenModel = mongoose.model('ResetTokenModel', schemas.ResetToken);

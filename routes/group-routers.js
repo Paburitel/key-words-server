@@ -52,6 +52,13 @@ module.exports = function (app) {
                 log.info('Group created');
                 return res.send({ status: 'OK', data: group });
             } else {
+                if(err.name === 'ValidationError') {
+                    res.statusCode = 400;
+                    res.send({ error: 'Validation error' });
+                } else {
+                    res.statusCode = 500;
+                    res.send({ error: 'Server error' });
+                }
                 log.error('Internal error(%d): %s',res.statusCode, err.message);
             }
         });
