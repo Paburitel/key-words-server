@@ -38,14 +38,12 @@ passport.use(new BearerStrategy(
         AccessTokenModel.findOne({ token: accessToken }, (err, token) => {
             if (err) { return done(err); }
             if (!token) { return done(null, false); }
-
             if( Math.round((Date.now()- token.created) / 1000) > config.security.tokenLife ) {
                 AccessTokenModel.remove({ token: accessToken }, (err) => {
                     if (err) return done(err);
                 });
                 return done(null, false, { message: 'Token expired' });
             }
-
             UserModel.findById(token.userId, (err, user) => {
                 if (err) { return done(err); }
                 if (!user) { return done(null, false, { message: 'Unknown user' }); }

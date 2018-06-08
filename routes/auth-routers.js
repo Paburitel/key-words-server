@@ -63,17 +63,18 @@ module.exports = function (app) {
                     log.info('token not found');
                     return res.send({ error: 'Not found' });
                 } else {
+                    RefreshTokenModel.remove({ userId: token.userId, clientId: token.clientId }, function (err) {
+                        if (err) log.error('Internal error(%d): %s', res.statusCode, err.message);
+                    });
                     AccessTokenModel.remove({ token: accessToken,  },  (err) => {
                         if (err) {
                             res.statusCode = 500;
                             log.error('Internal error(%d): %s',res.statusCode,err.message);
                             return res.send({ error: 'Server error' });
                         } else {
+                            log.info('AccessTokenModel.remove');
                             return res.send({ status: 'OK' });
                         }
-                    });
-                    RefreshTokenModel.remove({ userId: token.userId, clientId: token.clientId }, function (err) {
-                        if (err) log.error('Internal error(%d): %s', res.statusCode, err.message);
                     });
                 }
             });

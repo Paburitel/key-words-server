@@ -5,10 +5,10 @@ const passport = require('passport');
 
 module.exports = function (app) {
     app.get('/v0/groups', passport.authenticate('bearer', { session: false }), (req, res) => {
-        return GroupModel.find({ created_by: req.user._id}, (err, groups) => {
+        return GroupModel.find({ created_by: { $nin: [req.user._id] } }, (err, groups) => {
             if(!groups) {
                 res.statusCode = 404;
-                log.info('no groups');
+                log.info('no  groups');
                 return res.send({ error: 'Not found' });
             };
             if (!err) {
@@ -22,7 +22,25 @@ module.exports = function (app) {
         });
     });
 
-    app.get('/v0/groups/:id', function(req, res) {
+    app.get('/v0/user/groups', passport.authenticate('bearer', { session: false }), (req, res) => {
+        return GroupModel.find({ created_by: req.user._id}, (err, groups) => {
+            if(!groups) {
+                res.statusCode = 404;
+                log.info('no groups');
+                return res.send({ error: 'Not found' });
+            };
+            if (!err) {
+                log.info('send user groups');
+                return res.send({ status: 'OK', data: groups });
+            } else {
+                res.statusCode = 500;
+                log.error('Internal error(%d): %s', res.statusCode, err.message);
+                return res.send({ error: 'Server error' });
+            }
+        });
+    });
+
+    app.get('/v0/user/groups/:id', function(req, res) {
         return GroupModel.findById(req.params.id, (err, group) => {
             if(!group) {
                 res.statusCode = 404;
@@ -40,7 +58,7 @@ module.exports = function (app) {
         });
     });
 
-    app.post('/v0/groups', passport.authenticate('bearer', { session: false }), (req, res) => {
+    app.post('/v0/user/groups', passport.authenticate('bearer', { session: false }), (req, res) => {
         const group = new GroupModel({
             created_by: req.user.id,
             name: req.body.name,
@@ -64,7 +82,7 @@ module.exports = function (app) {
         });
     });
 
-    app.put('/V0/groups/:id', passport.authenticate('bearer', { session: false }), (req, res) => {
+    app.put('/V0/user/groups/:id', passport.authenticate('bearer', { session: false }), (req, res) => {
         return GroupModel.findById(req.params.id, (err, group) => {
             if(!group) {
                 res.statusCode = 404;
@@ -94,7 +112,7 @@ module.exports = function (app) {
             });
         });
     });
-    app.delete('/V0/groups/:id', passport.authenticate('bearer', { session: false }), (req, res) => {
+    app.delete('/V0/user/groups/:id', passport.authenticate('bearer', { session: false }), (req, res) => {
         return GroupModel.findById(req.params.id, (err, group) => {
             if(!group) {
                 res.statusCode = 404;
