@@ -23,6 +23,7 @@ module.exports = function (app) {
     });
 
     app.get('/v0/user/groups', passport.authenticate('bearer', { session: false }), (req, res) => {
+        const ID = req.user._id + 1;
         return GroupModel.find({ created_by: req.user._id}, (err, groups) => {
             if(!groups) {
                 res.statusCode = 404;
