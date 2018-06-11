@@ -19,8 +19,10 @@ const passport = require('passport');
 const config = require('./config/config');
 
 const routes = require('./routes/index');
+const PORT = process.env.PORT || config.port;
 
 app.use(passport.initialize());
+log.info(process.env.NODE_ENV);
 
 require('./libs/oauth');
 
@@ -69,8 +71,8 @@ app.use((err, req, res, next) => {
 });
 /** -------------------------------------------- */
 
-app.listen(config.port, () => {
-    log.info('Express server listening on port 3000!!!');
+app.listen(PORT, () => {
+    log.info('Express server listening on port ' + PORT + '!!!');
 });
 
 module.exports.app = app;

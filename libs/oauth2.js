@@ -23,8 +23,8 @@ server.exchange(oauth2orize.exchange.password((client, username, password, scope
             if (err) return done(err);
         });
 
-        const tokenValue = crypto.randomBytes(32).toString('base64');
-        const refreshTokenValue = crypto.randomBytes(32).toString('base64');
+        const tokenValue = crypto.randomBytes(32).toString('hex');
+        const refreshTokenValue = crypto.randomBytes(32).toString('hex');
         const token = new AccessTokenModel({ token: tokenValue, clientId: client.clientId, userId: user.userId });
         const refreshToken = new RefreshTokenModel({ token: refreshTokenValue, clientId: client.clientId, userId: user.userId });
         refreshToken.save(function (err) {
@@ -48,16 +48,14 @@ server.exchange(oauth2orize.exchange.refreshToken((client, refreshToken, scope, 
         UserModel.findById(token.userId, (err, user) => {
             if (err) { return done(err); }
             if (!user) { return done(null, false); }
-
             RefreshTokenModel.remove({ userId: user.userId, clientId: client.clientId }, (err) => {
                 if (err) return done(err);
             });
             AccessTokenModel.remove({ userId: user.userId, clientId: client.clientId },  (err) => {
                 if (err) return done(err);
             });
-
-            const tokenValue = crypto.randomBytes(32).toString('base64');
-            const refreshTokenValue = crypto.randomBytes(32).toString('base64');
+            const tokenValue = crypto.randomBytes(32).toString('hex');
+            const refreshTokenValue = crypto.randomBytes(32).toString('hex');
             const token = new AccessTokenModel({ token: tokenValue, clientId: client.clientId, userId: user.userId });
             const refreshToken = new RefreshTokenModel({ token: refreshTokenValue, clientId: client.clientId, userId: user.userId });
             refreshToken.save((err) => {
@@ -66,7 +64,7 @@ server.exchange(oauth2orize.exchange.refreshToken((client, refreshToken, scope, 
             const info = { scope: '*' }
             token.save((err) => {
                 if (err) { return done(err); }
-                done(null, tokenValue, refreshTokenValue, { 'expires_in': config.get('security:tokenLife') });
+                done(null, tokenValue, refreshTokenValue, { 'expires_in':  config.security.tokenLife });
             });
         });
     });

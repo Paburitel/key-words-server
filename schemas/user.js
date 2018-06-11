@@ -25,6 +25,10 @@ module.exports = function (mongoose) {
         created: {
             type: Date,
             default: Date.now
+        },
+        confirmed: {
+            type: Boolean,
+            default: false
         }
     });
 
