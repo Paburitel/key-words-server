@@ -22,7 +22,6 @@ const routes = require('./routes/index');
 const PORT = process.env.PORT || config.port;
 
 app.use(passport.initialize());
-log.info(process.env.NODE_ENV);
 
 require('./libs/oauth');
 
@@ -51,7 +50,6 @@ app.options('/*', (req, res) => {
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With, application/x-www-form-urlencoded');
     res.sendStatus(200);
 });
-routes(app);
 
 /** Error catching */
 
@@ -69,8 +67,8 @@ app.use((err, req, res, next) => {
     res.send({ error: err.message });
     return next();
 });
+routes(app);
 /** -------------------------------------------- */
-
 app.listen(PORT, () => {
     log.info('Express server listening on port ' + PORT + '!!!');
 });
