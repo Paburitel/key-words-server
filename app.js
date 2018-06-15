@@ -37,6 +37,7 @@ const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'),
 app.use(morgan('combined', {stream: accessLogStream}));
 
 //---------------------------------------------------------------
+/** Set options */
 app.use((req, res, next) => {
     const allowedOrigins = ['http://localhost:4200'];
     const origin = req.headers.origin;
@@ -51,8 +52,10 @@ app.options('/*', (req, res) => {
     res.sendStatus(200);
 });
 
-/** Error catching */
+/** Start routing */
+routes(app);
 
+/** Error catching */
 app.use((req, res, next) => {
     res.status(404);
     log.debug('Not found URL: %s', req.url);
@@ -67,7 +70,6 @@ app.use((err, req, res, next) => {
     res.send({ error: err.message });
     return next();
 });
-routes(app);
 /** -------------------------------------------- */
 app.listen(PORT, () => {
     log.info('Express server listening on port ' + PORT + '!!!');
