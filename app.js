@@ -27,8 +27,6 @@ require('./libs/oauth');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(favicon(path.join(__dirname, 'dist', 'favicon.ico')));
-app.use(express.static('/*', path.join(__dirname, "dist")));
 
 // create a write stream (in append mode)
 const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), {flags: 'a'});
@@ -37,6 +35,10 @@ const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'),
 app.use(morgan('combined', {stream: accessLogStream}));
 
 //---------------------------------------------------------------
+app.use(favicon(path.join(__dirname, 'dist', 'favicon.ico')));
+app.use(express.static(path.join(__dirname, "dist")));
+app.use(express.static('/*', path.join(__dirname, "dist")));
+
 /** Set options */
 app.use((req, res, next) => {
     const allowedOrigins = ['http://localhost:4200'];
