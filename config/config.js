@@ -1,18 +1,19 @@
+require('dotenv').config();
 module.exports = {
     port: 3000,
     security: {
         tokenLife: 3600 * 100, //in sec
         resetTokenLife: 3600, //in sec
         confirmTokenLife: 3600, //in sec
-        client_id: '665935136173-43gdh0vlhohvh21p3u3dv7p0j1i49an7.apps.googleusercontent.com',
-        client_secret: 'noCbeZe7A6y-vXoesqtlt4m1'
+        client_id: process.env.CLIENT_ID, //CLIENT_ID
+        client_secret: process.env.CLIENT_SECRET // CLIENT_SECRET
     },
     mongoose: {
-        url: 'mongodb://Paburitel:kw1996@ds263759.mlab.com:63759/key-words'
+        url: process.env.MONGODB_URL // MONGODB_URL
     },
     email: {
-        password: 'passwordForServices',
-        email: 'nikappservices@gmail.com',
+        password: process.env.SERVICE_EMAIL_PASSWORD, //SERVICE_EMAIL_PASSWORD
+        email: process.env.SERVICE_EMAIL_EMAIL,  //SERVICE_EMAIL_EMAIL
         service: 'gmail'
     }
 };
