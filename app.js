@@ -39,7 +39,7 @@ app.use(morgan('combined', {stream: accessLogStream}));
 app.use(favicon(path.join(__dirname, 'dist', 'favicon.ico')));
 app.use(express.static(path.join(__dirname, "dist")));
 app.get('/*', function(req, res){
-    res.sendFile(__dirname + '/index.html');
+    res.sendFile(__dirname + '/dist/index.html');
 });
 /** Set options */
 app.use((req, res, next) => {
