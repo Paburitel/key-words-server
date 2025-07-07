@@ -1,7 +1,7 @@
-const groupRoutes  = require('./group-routers');
-const authRoutes  = require('./auth-routers');
+import groupRoutes from './group-routers.js';
+import authRoutes from './auth-routers.js';
 
-module.exports = function (app) {
+export default function (app) {
     groupRoutes(app);
     authRoutes(app);
 }

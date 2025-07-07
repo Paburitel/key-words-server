@@ -1,9 +1,11 @@
 
-const log = require('../libs/log')(module);
-const GroupModel = require('../libs/mongoose').GroupModel;
-const passport = require('passport');
+import logModule from '../libs/log.js';
+import { GroupModel } from '../libs/mongoose.js';
+import passport from 'passport';
 
-module.exports = function (app) {
+const log = logModule;
+
+export default function (app) {
     app.get('/v0/groups', passport.authenticate('bearer', { session: false }), (req, res) => {
         return GroupModel.find({ created_by: { $nin: [req.user._id] } }, (err, groups) => {
             if(!groups) {

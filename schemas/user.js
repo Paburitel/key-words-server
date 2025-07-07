@@ -1,6 +1,6 @@
-const crypto = require('crypto');
+import crypto from 'crypto';
 
-module.exports = function (mongoose) {
+export default function (mongoose) {
     const Schema = mongoose.Schema;
     // User
     const User = new Schema({

@@ -1,11 +1,11 @@
-const oauth2orize         = require('oauth2orize');
-const passport            = require('passport');
-const crypto              = require('crypto');
-const config              = require('../config/config');
-const UserModel           = require('./mongoose').UserModel;
-const AccessTokenModel    = require('./mongoose').AccessTokenModel;
-const RefreshTokenModel   = require('./mongoose').RefreshTokenModel;
-const log = require('../libs/log')(module);
+import oauth2orize from 'oauth2orize';
+import passport from 'passport';
+import crypto from 'crypto';
+import config from '../config/config.js';
+import { UserModel, AccessTokenModel, RefreshTokenModel } from './mongoose.js';
+import logModule from '../libs/log.js';
+
+const log = logModule;
 
 // create OAuth 2.0 server
 const server = oauth2orize.createServer();

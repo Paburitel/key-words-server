@@ -1,13 +1,12 @@
-const config                  = require('../config/config');
-const passport                = require('passport');
-const BasicStrategy           = require('passport-http').BasicStrategy;
-const ClientPasswordStrategy  = require('passport-oauth2-client-password').Strategy;
-const BearerStrategy          = require('passport-http-bearer').Strategy;
-const UserModel               = require('./mongoose').UserModel;
-const ClientModel             = require('./mongoose').ClientModel;
-const AccessTokenModel        = require('./mongoose').AccessTokenModel;
-const RefreshTokenModel       = require('./mongoose').RefreshTokenModel;
-const log = require('../libs/log')(module);
+import config from '../config/config.js';
+import passport from 'passport';
+import { BasicStrategy } from 'passport-http';
+import { Strategy as ClientPasswordStrategy } from 'passport-oauth2-client-password';
+import { Strategy as BearerStrategy } from 'passport-http-bearer';
+import { UserModel, ClientModel, AccessTokenModel, RefreshTokenModel } from './mongoose.js';
+import logModule from '../libs/log.js';
+
+const log = logModule;
 
 passport.use(new BasicStrategy(
     (username, password, done) => {

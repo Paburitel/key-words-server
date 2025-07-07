@@ -1,43 +1,39 @@
 /**
  * Created by Paburitel on 30.04.2018.
  */
-const express = require('express');
-const morgan = require('morgan');
-const app = express();
-const fs = require('fs');
-const bodyParser = require('body-parser');
+
+import express from 'express';
+import morgan from 'morgan';
+import fs from 'fs';
+import bodyParser from 'body-parser';
 // use for new client
-// const makeClient = require('./helpers/makeClient')();
+// import makeClient from './helpers/makeClient.js';
+import favicon from 'serve-favicon';
+import path from 'path';
+import logModule from './libs/log.js';
+import passport from 'passport';
+import config from './config/config.js';
+import routes from './routes/index.js';
+import './libs/oauth.js';
 
-const favicon = require('serve-favicon');
-const path = require('path');
-
-const log = require('./libs/log')(module);
-
-const passport = require('passport');
-
-const config = require('./config/config');
-
-const routes = require('./routes/index');
+const app = express();
 const PORT = process.env.PORT || config.port;
 
 app.use(passport.initialize());
-
-require('./libs/oauth');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // create a write stream (in append mode)
-const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), {flags: 'a'});
+const accessLogStream = fs.createWriteStream(path.join(path.dirname(new URL(import.meta.url).pathname), 'access.log'), {flags: 'a'});
 
 // setup the logger
 app.use(morgan('combined', {stream: accessLogStream}));
 
 //---------------------------------------------------------------
 /** Send static files */
-app.use(favicon(path.join(__dirname, 'dist', 'favicon.ico')));
-app.use(express.static(path.join(__dirname, "dist")));
+app.use(favicon(path.join(path.dirname(new URL(import.meta.url).pathname), 'dist', 'favicon.ico')));
+app.use(express.static(path.join(path.dirname(new URL(import.meta.url).pathname), "dist")));
 
 /** Set options */
 app.use((req, res, next) => {
@@ -59,7 +55,7 @@ routes(app);
 
 /** Send all other requests to the Angular app */
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'dist/index.html'));
+    res.sendFile(path.join(path.dirname(new URL(import.meta.url).pathname), 'dist/index.html'));
 });
 
 /** Error catching */
@@ -82,4 +78,4 @@ app.listen(PORT, () => {
     log.info('Express server listening on port ' + PORT + '!!!');
 });
 
-module.exports.app = app;
+export { app };

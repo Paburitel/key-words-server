@@ -1,15 +1,13 @@
-const oauth2 = require('../libs/oauth2');
-const passport = require('passport');
-const UserModel = require('../libs/mongoose').UserModel;
-const AccessTokenModel = require('../libs/mongoose').AccessTokenModel;
-const RefreshTokenModel = require('../libs/mongoose').RefreshTokenModel;
-const ResetTokenModel = require('../libs/mongoose').ResetTokenModel;
-const log = require('../libs/log')(module);
-const config = require('../config/config');
-const async = require('async');
-const crypto = require('crypto');
+import oauth2 from '../libs/oauth2.js';
+import passport from 'passport';
+import { UserModel, AccessTokenModel, RefreshTokenModel, ResetTokenModel } from '../libs/mongoose.js';
+import logModule from '../libs/log.js';
+import config from '../config/config.js';
+import async from 'async';
+import crypto from 'crypto';
+import nodemailer from 'nodemailer';
 
-const nodemailer = require('nodemailer');
+const log = logModule;
 const transporter = nodemailer.createTransport({
     service: config.email.service,
     auth: {
@@ -18,7 +16,7 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-module.exports = function (app) {
+export default function (app) {
     app.post('/api/oauth/reg', (req, res) => {
         const data = {
             username: req.body.username,

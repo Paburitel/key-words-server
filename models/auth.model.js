@@ -1,5 +1,5 @@
 
-module.exports = {
+export default {
     getAccessToken: function() {
         return new Promise('works!');
     },
